@@ -1,0 +1,6 @@
+.checkout-bot/
+.nvidia-bot/
+__pycache__/
+.ipynb_checkpoints/
+Initial Exploration.ipynb
+*.log
