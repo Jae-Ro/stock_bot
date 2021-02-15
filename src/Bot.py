@@ -129,11 +129,11 @@ class StockBot():
 
     def get_dom_obj(self, selector_obj):
         if selector_obj['selector_type'] == "css_selector":
-            dom_obj = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector_obj['selector'])))
+            dom_obj = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "id":
-            dom_obj = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.ID, selector_obj['selector'])))
+            dom_obj = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.ID, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "class_name":
-            dom_obj = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, selector_obj['selector'])))
+            dom_obj = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "xpath":
             dom_obj = self.driver.find_element_by_xpath(selector_obj['selector'])
         return dom_obj
