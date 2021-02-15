@@ -11,7 +11,7 @@ def main(args):
     with open('./configs/walmart_config.json') as file:
         config = json.load(file)
     products = config['products']
-    bot = StockBot(username=env_config("USERNAME"), password=env_config("PASSWORD"), 
+    bot = StockBot(username=env_config("WALMART_USERNAME"), password=env_config("WALMART_PASSWORD"), 
                     website_dict=config['website'], product_dict=products[0], 
                     logger=logging, cvv_code=env_config("CVV"), headless=args['headless'], test_mode=args['test_mode'])
     bot.run()

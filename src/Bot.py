@@ -147,6 +147,7 @@ class StockBot():
                 break
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']}to Click")
+                time.sleep(0.05)
                 if count % 10 == 0 and count != 0:
                     self.driver.refresh()
             
