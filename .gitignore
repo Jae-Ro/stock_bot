@@ -6,3 +6,4 @@ Initial Exploration.ipynb
 *.log
 cookies.json
 .DS_Store
+*.env

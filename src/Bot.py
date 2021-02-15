@@ -8,7 +8,7 @@ import os
 import json
 
 class StockBot():
-    def __init__(self, username, password, website_dict, product_dict, logger, cvv_code, test_mode=True):
+    def __init__(self, username, password, website_dict, product_dict, logger, cvv_code, headless=False, test_mode=True):
         self.username = username
         self.password = password
         self.product = product_dict
@@ -20,7 +20,8 @@ class StockBot():
         # self.driver = webdriver.Chrome(chrome_options=options)
 
         options = webdriver.FirefoxOptions()
-        # options.add_argument("--headless")
+        if headless:
+            options.add_argument("--headless")
         profile = webdriver.FirefoxProfile()
         profile.set_preference("network.http.pipelining", True)
         profile.set_preference("network.http.proxy.pipelining", True)
@@ -139,18 +140,16 @@ class StockBot():
     
     def wait_click(self, selector_obj):
         count = 0
-        while count < 100:
+        while True:
             try:
                 btn = self.get_dom_obj(selector_obj)
                 btn.click()
                 break
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']}to Click")
-                time.sleep(0.1)
                 if count % 10 == 0 and count != 0:
                     self.driver.refresh()
-            count +=1
-
+            
         self.logging.info(f'Successfully Clicked {selector_obj["name"]}')
         return True
     

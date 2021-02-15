@@ -4,19 +4,22 @@ import json
 from utils import logger
 from Bot import StockBot
 import os
+from decouple import config as env_config
 
-def main():
+def main(args):
     logging = logger.create_logger()
     with open('./configs/walmart_config.json') as file:
         config = json.load(file)
     products = config['products']
-    bot = StockBot(username=os.getenv("USERNAME", default=""), password=os.getenv("PASSWORD", default=""), 
+    bot = StockBot(username=env_config("USERNAME"), password=env_config("PASSWORD"), 
                     website_dict=config['website'], product_dict=products[0], 
-                    logger=logging, cvv_code=os.getenv("CVV", default=""), test_mode=True)
+                    logger=logging, cvv_code=env_config("CVV"), headless=args['headless'], test_mode=args['test_mode'])
     bot.run()
 
 
 if __name__== "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--test_mode", help="use this flag to turn on test_mode. Defaults to False unless specified", action="store_true")
-    main()
+    parser.add_argument("--headless", help="use this flag to turn on headless mode. Defaults to False unlesss used", action="store_true")
+    args = vars(parser.parse_args())
+    main(args)
