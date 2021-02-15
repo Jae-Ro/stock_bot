@@ -1,0 +1,65 @@
+{
+    "products": [
+        {
+            "name": "PlayStation-5-Console",
+            "description": "Disk version of the PS5 Console",
+            "product_url": "https://www.walmart.com/ip/Apple-12W-USB-Power-Adapter/22084247",
+            "sku": 22084247,
+            "price": 0.0
+        }
+    ],
+    "website": {
+        "login_url": "https://www.walmart.com/account/login",
+        "cart_url": "https://www.walmart.com/cart",
+        "cart_btn_obj": {
+            "name": "add-to-cart-button",
+            "selector": "button[data-tl-id='ProductPrimaryCTA-cta_add_to_cart_button']",
+            "selector_type": "css_selector"
+        },
+        "checkout_btn_obj": {
+            "name": "checkout-button",
+            "selector": "button[data-tl-id='CartCheckOutBtnBottom']",
+            "selector_type": "css_selector"
+        },
+        "delivery_date_continue_btn_obj": {
+            "name": "delivery-options-continue-button",
+            "selector": "button[data-automation-id='fulfillment-continue']",
+            "selector_type": "css_selector"
+        },
+        "confirm_delivery_address_continue_btn_obj": {
+            "name": "confirm-delivery-address-continue-button",
+            "selector": "button[data-automation-id='address-book-action-buttons-on-continue']",
+            "selector_type": "css_selector"
+        },
+        "cvv_security_field_obj": {
+            "name": "credit-card-security-code-field",
+            "selector": "cvv-confirm",
+            "selector_type": "id"
+        },
+        "review_order_btn_obj": {
+            "name": "confirm-payment-review-order-button",
+            "selector": "button[data-automation-id='submit-payment-cc']",
+            "selector_type": "css_selector"
+        },
+        "place_order_btn_obj": {
+            "name": "place-order-button",
+            "selector": "button[data-automation-id='summary-place-holder']",
+            "selector_type": "css_selector"
+        },
+        "username_field_obj": {
+            "name": "username-field",
+            "selector": "email",
+            "selector_type": "id"
+        },
+        "password_field_obj": {
+            "name": "password-field",
+            "selector": "password",
+            "selector_type": "id"
+        },
+        "login_submit_btn_obj": {
+            "name": "submit-button",
+            "selector": ".button.m-margin-top.text-inherit",
+            "selector_type": "css_selector"
+        }
+    }
+}

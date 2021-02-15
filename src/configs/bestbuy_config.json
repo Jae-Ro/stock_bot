@@ -1,0 +1,11 @@
+{
+    "products": [
+        {
+            "name": "Sony-Playstation-5-Console",
+            "description": "Disk version of the PS5 Console",
+            "url": "https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149",
+            "sku": 6426149,
+            "price": 0.0
+        }
+    ]
+}
