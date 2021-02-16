@@ -4,6 +4,6 @@ __pycache__/
 .ipynb_checkpoints/
 Initial Exploration.ipynb
 *.log
-cookies.json
+*cookies.json
 .DS_Store
 *.env

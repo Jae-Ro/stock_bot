@@ -3,9 +3,55 @@
         {
             "name": "Sony-Playstation-5-Console",
             "description": "Disk version of the PS5 Console",
-            "url": "https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149",
-            "sku": 6426149,
-            "price": 0.0
+            "product_url": "https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149"
         }
-    ]
+    ],
+    "website": {
+        "login_url": "https://www.bestbuy.com/identity/global/signin",
+        "cart_url": "https://www.bestbuy.com/cart",
+        "product_price_obj": {
+            "name": "price-field",
+            "selector": ".priceView-hero-price.priceView-customer-price > .sr-only",
+            "selector_type": "css_selector",
+            "attribute": "innerText"
+        },
+        "cart_btn_obj": {
+            "name": "add-to-cart-button",
+            "selector": "button[class='btn btn-primary btn-lg btn-block btn-leading-ficon add-to-cart-button']",
+            "selector_type": "css_selector"
+        },
+        "checkout_btn_obj": {
+            "name": "checkout-button",
+            "selector": "button[data-track='Checkout - Top']",
+            "selector_type": "css_selector"
+        },
+        "cvv_security_field_obj": {
+            "name": "credit-card-security-code-field",
+            "selector": "credit-card-cvv",
+            "selector_type": "id"
+        },
+        "place_order_btn_obj": {
+            "name": "place-order-button",
+            "selector": "button[data-track='Place your Order - Contact Card']",
+            "selector_type": "css_selector"
+        },
+        "delivery_date_continue_btn_obj": {},
+        "confirm_delivery_address_continue_btn_obj": {},
+        "review_order_btn_obj": {},
+        "username_field_obj": {
+            "name": "username-field",
+            "selector": "fld-e",
+            "selector_type": "id"
+        },
+        "password_field_obj": {
+            "name": "password-field",
+            "selector": "fld-p1",
+            "selector_type": "id"
+        },
+        "login_submit_btn_obj": {
+            "name": "submit-button",
+            "selector": "button[data-track='Sign In']",
+            "selector_type": "css_selector"
+        }
+    }
 }

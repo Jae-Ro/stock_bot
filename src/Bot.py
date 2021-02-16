@@ -8,7 +8,8 @@ import os
 import json
 
 class StockBot():
-    def __init__(self, username, password, website_dict, product_dict, logger, cvv_code, max_price=550.00, headless=False, test_mode=True):
+    def __init__(self, site, username, password, website_dict, product_dict, logger, cvv_code, max_price=550.00, headless=False, test_mode=True):
+        self.site_name = site
         self.username = username
         self.password = password
         self.product = product_dict
@@ -62,14 +63,14 @@ class StockBot():
     def run(self):
         try:
             # Logging and Storing Cookies so we don't have to login again
-            if not os.path.exists(os.path.join(os.getcwd(), "cookies.json")):
+            if not os.path.exists(os.path.join(os.getcwd(), f"{self.site_name}_cookies.json")):
                 self.navigate(self.website['login_url'])
                 self.login(self.website['username_field_obj'], self.website['password_field_obj'], self.website['login_submit_btn_obj'])
-                raise KeyboardInterrupt
+                raise ValueError
             
             # Once we have the login cookies we can go directly to the product page and restore our session with our saved cookies
             self.navigate(self.product['product_url'])
-            with open('cookies.json', 'r') as cookiesfile:
+            with open(f"{self.site_name}_cookies.json", 'r') as cookiesfile:
                 cookies = json.load(cookiesfile)
                 for cookie in cookies:
                     self.driver.add_cookie(cookie)
@@ -94,16 +95,19 @@ class StockBot():
         self.wait_type(username_obj, self.username)
         self.wait_type(password_obj, self.password)
         self.wait_click(submit_obj)
-        self.logging.info('Successfully Logged into Walmart Account')
+        self.logging.info(f'Successfully Logged into {self.site_name} Account')
         time.sleep(5)
         # Store cookies
-        with open('cookies.json', 'w') as filehandler:
+        with open(f"{self.site_name}_cookies.json", 'w') as filehandler:
             json.dump(self.driver.get_cookies(), filehandler)
         return
 
     def add_to_cart(self, selector_obj, price_selector_obj, max_price):
         self.logging.info(f"Checking Price of {self.product['name']}")
-        price = float(self.get_dom_obj(price_selector_obj).get_attribute(price_selector_obj["attribute"]))
+        price = self.get_dom_obj(price_selector_obj).get_attribute(price_selector_obj["attribute"])
+        if self.site_name == "bestbuy":
+            price = price.split("$")[-1]
+        price = float(price)
         self.logging.info(f"Price of {self.product['name']}: ${price}")
         if price > max_price:
             self.logging.info(f" Current Product Price: ${price} > Max Price Limit: ${max_price}. Exiting Program.")
@@ -117,10 +121,13 @@ class StockBot():
                 security_code, confirm_payment_btn, place_order_btn):
         self.logging.info(f"Starting Checkout of {self.product['name']}")
         self.wait_click(checkout_btn)
-        self.wait_click(fulfillment_btn)
-        self.wait_click(confirm_delivery_btn)
-        self.wait_type(security_code_field, security_code)
-        self.wait_click(confirm_payment_btn)
+        if self.site_name =="walmart":
+            self.wait_click(fulfillment_btn)
+            self.wait_click(confirm_delivery_btn)
+            self.wait_type(security_code_field, security_code)
+            self.wait_click(confirm_payment_btn)
+        elif self.site_name == "bestbuy":
+            self.wait_type(security_code_field, security_code)
         if not self.test_mode:
             self.wait_click(place_order_btn)
             self.logging.info(f"Your order of {self.product['name']} was succesfully placed. MISSION COMPLETE!!!!")
@@ -130,7 +137,7 @@ class StockBot():
         return
 
     def finish(self):
-        self.logging.info(f"Finishing Walmart Webdriver")
+        self.logging.info(f"Finishing {self.site_name} Webdriver")
         self.driver.close()
         return
     
@@ -160,7 +167,8 @@ class StockBot():
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
                 time.sleep(0.05)
-                if count % 10 == 0 and count != 0:
+                if count % 30 == 0 and count != 0:
+                    self.logging.info("Refreshing Page")
                     self.driver.refresh()
             
         self.logging.info(f'Successfully Clicked {selector_obj["name"]}')
@@ -176,8 +184,9 @@ class StockBot():
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
                 time.sleep(0.1)
-                if count % 10 == 0 and count != 0:
+                if count % 30 == 0 and count != 0:
+                    self.logging.info("Refreshing Page")
                     self.driver.refresh()
             count +=1
-        self.logging.info(f'Successfully Filed in {selector_obj["name"]}')
+        self.logging.info(f'Successfully Filled in {selector_obj["name"]}')
         return True
