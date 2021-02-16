@@ -13,7 +13,8 @@ def main(args):
     products = config['products']
     bot = StockBot(username=env_config("WALMART_USERNAME"), password=env_config("WALMART_PASSWORD"), 
                     website_dict=config['website'], product_dict=products[0], 
-                    logger=logging, cvv_code=env_config("CVV"), headless=args['headless'], test_mode=args['test_mode'])
+                    logger=logging, cvv_code=env_config("CVV"), max_price=env_config("MAX_PRICE"), 
+                    headless=args['headless'], test_mode=args['test_mode'])
     bot.run()
 
 

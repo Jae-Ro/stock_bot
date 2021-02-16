@@ -3,14 +3,18 @@
         {
             "name": "PlayStation-5-Console",
             "description": "Disk version of the PS5 Console",
-            "product_url": "https://www.walmart.com/ip/PlayStation-5-Console/363472942",
-            "sku": 363472942,
-            "price": 0.0
+            "product_url": "https://www.walmart.com/ip/PlayStation-5-Console/363472942"
         }
     ],
     "website": {
         "login_url": "https://www.walmart.com/account/login",
         "cart_url": "https://www.walmart.com/cart",
+        "product_price_obj": {
+            "name": "price-field",
+            "selector": "span[class='price-characteristic']",
+            "selector_type": "css_selector",
+            "attribute": "content"
+        },
         "cart_btn_obj": {
             "name": "add-to-cart-button",
             "selector": "button[data-tl-id='ProductPrimaryCTA-cta_add_to_cart_button']",

@@ -8,7 +8,7 @@ import os
 import json
 
 class StockBot():
-    def __init__(self, username, password, website_dict, product_dict, logger, cvv_code, headless=False, test_mode=True):
+    def __init__(self, username, password, website_dict, product_dict, logger, cvv_code, max_price=550.00, headless=False, test_mode=True):
         self.username = username
         self.password = password
         self.product = product_dict
@@ -16,9 +16,9 @@ class StockBot():
         self.logging = logger
         self.test_mode = test_mode
         self.cvv_code = str(cvv_code)
+        self.max_price = float(max_price)
         # options = webdriver.ChromeOptions()
         # self.driver = webdriver.Chrome(chrome_options=options)
-
         options = webdriver.FirefoxOptions()
         if headless:
             options.add_argument("--headless")
@@ -66,13 +66,15 @@ class StockBot():
                 self.navigate(self.website['login_url'])
                 self.login(self.website['username_field_obj'], self.website['password_field_obj'], self.website['login_submit_btn_obj'])
                 raise KeyboardInterrupt
+            
             # Once we have the login cookies we can go directly to the product page and restore our session with our saved cookies
             self.navigate(self.product['product_url'])
             with open('cookies.json', 'r') as cookiesfile:
                 cookies = json.load(cookiesfile)
                 for cookie in cookies:
                     self.driver.add_cookie(cookie)
-            self.add_to_cart(self.website['cart_btn_obj'])
+            
+            self.add_to_cart(self.website['cart_btn_obj'], self.website['product_price_obj'], self.max_price)
             self.navigate(self.website['cart_url'])
             self.checkout(
                 self.website['checkout_btn_obj'],
@@ -99,7 +101,14 @@ class StockBot():
             json.dump(self.driver.get_cookies(), filehandler)
         return
 
-    def add_to_cart(self, selector_obj):
+    def add_to_cart(self, selector_obj, price_selector_obj, max_price):
+        self.logging.info(f"Checking Price of {self.product['name']}")
+        price = float(self.get_dom_obj(price_selector_obj).get_attribute(price_selector_obj["attribute"]))
+        self.logging.info(f"Price of {self.product['name']}: ${price}")
+        if price > max_price:
+            self.logging.info(f" Current Product Price: ${price} > Max Price Limit: ${max_price}. Exiting Program.")
+            raise ValueError
+        self.logging.info(f"Current Product Price: ${price} < Max Price Limit: ${max_price}. LET'S GOOOOO!")
         self.logging.info(f"Adding {self.product['name']} to Cart")
         self.wait_click(selector_obj)
         return
@@ -114,7 +123,10 @@ class StockBot():
         self.wait_click(confirm_payment_btn)
         if not self.test_mode:
             self.wait_click(place_order_btn)
-        time.sleep(100)
+            self.logging.info(f"Your order of {self.product['name']} was succesfully placed. MISSION COMPLETE!!!!")
+        else:
+            self.logging.info(f"This is the end of the line for the --test_mode. Wait 10 seconds and program will terminate.")
+            time.sleep(10)
         return
 
     def finish(self):
@@ -146,7 +158,7 @@ class StockBot():
                 btn.click()
                 break
             except:
-                self.logging.info(f"Didnt Find Selector {selector_obj['name']}to Click")
+                self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
                 time.sleep(0.05)
                 if count % 10 == 0 and count != 0:
                     self.driver.refresh()
@@ -162,7 +174,7 @@ class StockBot():
                 field.send_keys(text)
                 break
             except:
-                self.logging.info(f"Didnt Find Selector {selector_obj['name']}to Fill In")
+                self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
                 time.sleep(0.1)
                 if count % 10 == 0 and count != 0:
                     self.driver.refresh()
