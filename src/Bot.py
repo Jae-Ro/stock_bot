@@ -170,7 +170,7 @@ class StockBot():
                 if count % 30 == 0 and count != 0:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
-            
+            count +=1
         self.logging.info(f'Successfully Clicked {selector_obj["name"]}')
         return True
     
