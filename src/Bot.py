@@ -105,7 +105,9 @@ class StockBot():
     def add_to_cart(self, selector_obj, price_selector_obj, max_price):
         self.logging.info(f"Checking Price of {self.product['name']}")
         price = self.get_dom_obj(price_selector_obj).get_attribute(price_selector_obj["attribute"])
-        if self.site_name == "bestbuy":
+        if self.site_name == "walmart":
+            price = price.split("\n")[0].split("$")[-1]
+        elif self.site_name == "bestbuy":
             price = price.split("$")[-1]
         price = float(price)
         self.logging.info(f"Price of {self.product['name']}: ${price}")
