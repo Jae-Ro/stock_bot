@@ -176,7 +176,7 @@ class StockBot():
     
     def wait_type(self, selector_obj, text):
         count = 0
-        while count < 100:
+        while True:
             try:
                 field = self.get_dom_obj(selector_obj)
                 field.send_keys(text)
