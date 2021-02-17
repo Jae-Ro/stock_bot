@@ -3,6 +3,7 @@ import pickle
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
 import os
 import json
@@ -57,11 +58,15 @@ class StockBot():
         profile.set_preference("general.startup.browser", False)
         profile.set_preference("plugin.default_plugin_disabled", False)
         profile.set_preference("permissions.default.image", 2) # Image load disabled again
-        self.driver = webdriver.Firefox(firefox_profile=profile, options=options)
-        self.driver.maximize_window()
+        caps = DesiredCapabilities().FIREFOX
+        caps["pageLoadStrategy"] = "eager"
+        self.driver = webdriver.Firefox(firefox_profile=profile, desired_capabilities=caps, options=options)
+        # self.driver.maximize_window()
+        self.start = None
     
     def run(self):
         try:
+            self.start = time.time()
             # Logging and Storing Cookies so we don't have to login again
             if not os.path.exists(os.path.join(os.getcwd(), f"{self.site_name}_cookies.json")):
                 self.navigate(self.website['login_url'])
@@ -129,12 +134,15 @@ class StockBot():
             self.wait_type(security_code_field, security_code)
             self.wait_click(confirm_payment_btn)
         elif self.site_name == "bestbuy":
+            if self.wait_type(self.website['password_field_obj'], self.password, max_count=5):
+                self.wait_click(self.website['login_submit_btn_obj'], max_count=1)
             self.wait_type(security_code_field, security_code)
         if not self.test_mode:
             self.wait_click(place_order_btn)
             self.logging.info(f"Your order of {self.product['name']} was succesfully placed. MISSION COMPLETE!!!!")
         else:
             self.logging.info(f"This is the end of the line for the --test_mode. Wait 10 seconds and program will terminate.")
+            self.logging.info(f"Total Run Time: {time.time()-self.start}s")
             time.sleep(10)
         return
 
@@ -148,18 +156,18 @@ class StockBot():
         self.driver.get(url)
         return
 
-    def get_dom_obj(self, selector_obj):
+    def get_dom_obj(self, selector_obj, timeout=1, poll_freq=0.0001):
         if selector_obj['selector_type'] == "css_selector":
-            dom_obj = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector_obj['selector'])))
+            dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "id":
-            dom_obj = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.ID, selector_obj['selector'])))
+            dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.ID, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "class_name":
-            dom_obj = WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, selector_obj['selector'])))
+            dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.CLASS_NAME, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "xpath":
             dom_obj = self.driver.find_element_by_xpath(selector_obj['selector'])
         return dom_obj
     
-    def wait_click(self, selector_obj):
+    def wait_click(self, selector_obj, max_count=None):
         count = 0
         while True:
             try:
@@ -168,15 +176,16 @@ class StockBot():
                 break
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
-                time.sleep(0.05)
-                if count % 30 == 0 and count != 0:
+                if count % 1000 == 0 and count != 0:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
+            if max_count and count == max_count:
+                return False
             count +=1
         self.logging.info(f'Successfully Clicked {selector_obj["name"]}')
         return True
     
-    def wait_type(self, selector_obj, text):
+    def wait_type(self, selector_obj, text, max_count=None):
         count = 0
         while True:
             try:
@@ -185,10 +194,11 @@ class StockBot():
                 break
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
-                time.sleep(0.1)
-                if count % 30 == 0 and count != 0:
+                if count % 1000 == 0 and count != 0:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
+            if max_count and count == max_count:
+                return False
             count +=1
         self.logging.info(f'Successfully Filled in {selector_obj["name"]}')
         return True
