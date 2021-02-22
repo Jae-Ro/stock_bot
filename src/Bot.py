@@ -62,7 +62,7 @@ class StockBot():
         caps = DesiredCapabilities().FIREFOX
         caps["pageLoadStrategy"] = "eager"
         self.driver = webdriver.Firefox(firefox_profile=profile, desired_capabilities=caps, options=options)
-        # self.driver.maximize_window()
+        self.driver.maximize_window()
         self.start = None
     
     def run(self):
