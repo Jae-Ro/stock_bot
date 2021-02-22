@@ -121,7 +121,7 @@ class StockBot():
             raise ValueError
         self.logging.info(f"Current Product Price: ${price} < Max Price Limit: ${max_price}. LET'S GOOOOO!")
         self.logging.info(f"Adding {self.product['name']} to Cart")
-        self.wait_click(selector_obj)
+        self.wait_click(selector_obj, refresh=True)
         return
 
     def checkout(self, checkout_btn, fulfillment_btn, confirm_delivery_btn, security_code_field, 
@@ -167,7 +167,7 @@ class StockBot():
             dom_obj = self.driver.find_element_by_xpath(selector_obj['selector'])
         return dom_obj
     
-    def wait_click(self, selector_obj, max_count=None):
+    def wait_click(self, selector_obj, max_count=None, refresh=False):
         count = 0
         while True:
             try:
@@ -176,7 +176,7 @@ class StockBot():
                 break
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
-                if count % 1000 == 0 and count != 0:
+                if count % 1000 == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
             if max_count and count == max_count:
@@ -185,7 +185,7 @@ class StockBot():
         self.logging.info(f'Successfully Clicked {selector_obj["name"]}')
         return True
     
-    def wait_type(self, selector_obj, text, max_count=None):
+    def wait_type(self, selector_obj, text, max_count=None, refresh=False):
         count = 0
         while True:
             try:
@@ -194,7 +194,7 @@ class StockBot():
                 break
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
-                if count % 1000 == 0 and count != 0:
+                if count % 1000 == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
             if max_count and count == max_count:
