@@ -122,7 +122,7 @@ class StockBot():
             raise ValueError
         self.logging.info(f"Current Product Price: ${price} < Max Price Limit: ${max_price}. LET'S GOOOOO!")
         self.logging.info(f"Adding {self.product['name']} to Cart")
-        self.wait_click(selector_obj, refresh=True)
+        self.wait_click(selector_obj, refresh=True, step_name="addtocart")
         return
 
     def checkout(self, checkout_btn, fulfillment_btn, confirm_delivery_btn, security_code_field, 
