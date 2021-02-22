@@ -16,7 +16,7 @@ RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckod
     rm geckodriver-v0.29.0-linux64.tar.gz && \
     export PATH=$PATH:/usr/local/bin/geckodriver/.
 
-RUN mkdir -p /home/stock_bot /home/stock_bot/src /home/stock_bot/videos
+RUN mkdir -p /home/stock_bot /home/stock_bot/src /home/stock_bot/logs /home/stock_bot/screenshots
 COPY src /home/stock_bot/src
 COPY .env /home/stock_bot
 RUN chmod 777 /home/stock_bot/
