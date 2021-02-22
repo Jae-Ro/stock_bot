@@ -108,7 +108,8 @@ class StockBot():
             json.dump(self.driver.get_cookies(), filehandler)
         return
 
-    def add_to_cart(self, selector_obj, price_selector_obj, max_price):
+    def price_check(self, kwarg_dict):
+        price_selector_obj, max_price = kwarg_dict['price_selector_obj'], kwarg_dict['max_price']
         self.logging.info(f"Checking Price of {self.product['name']}")
         price = self.get_dom_obj(price_selector_obj).get_attribute(price_selector_obj["attribute"])
         if self.site_name == "walmart":
@@ -120,9 +121,14 @@ class StockBot():
         if price > max_price:
             self.logging.info(f" Current Product Price: ${price} > Max Price Limit: ${max_price}. Exiting Program.")
             raise ValueError
-        self.logging.info(f"Current Product Price: ${price} < Max Price Limit: ${max_price}. LET'S GOOOOO!")
+        self.logging.info(f"Current Product Price: ${price} < Max Price Limit: ${max_price}. Let's Go!")
+        return
+
+    def add_to_cart(self, selector_obj, price_selector_obj, max_price):
         self.logging.info(f"Adding {self.product['name']} to Cart")
-        self.wait_click(selector_obj, refresh=True, step_name="addtocart")
+        price_dict = {"price_selector_obj": price_selector_obj, "max_price": max_price}
+        self.price_check(price_dict)
+        self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, step_name="addtocart")
         return
 
     def checkout(self, checkout_btn, fulfillment_btn, confirm_delivery_btn, security_code_field, 
@@ -168,7 +174,7 @@ class StockBot():
             dom_obj = self.driver.find_element_by_xpath(selector_obj['selector'])
         return dom_obj
     
-    def wait_click(self, selector_obj, max_count=None, refresh=False, step_name=""):
+    def wait_click(self, selector_obj, func=None, func_dict=None, max_count=None, refresh=False, step_name=""):
         count = 0
         while True:
             try:
@@ -177,9 +183,11 @@ class StockBot():
                 break
             except:
                 self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
-                if count % 1000 == 0 and count != 0 and refresh:
+                if count % 200 == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
+                    if func and func_dict:
+                        func(func_dict)
                 elif count % 100 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error_{self.dt_str}.png"):
                     self.logging.info("Taking Screenshot")
                     self.driver.get_screenshot_as_file(f"../screenshots/{step_name}_click_error_{self.dt_str}.png")
