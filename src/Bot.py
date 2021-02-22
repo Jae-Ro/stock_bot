@@ -181,6 +181,7 @@ class StockBot():
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
                 elif count % 100 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error.png"):
+                    self.logging.info("Taking Screenshot")
                     self.driver.get_screenshot_as_file(f"../screenshots/{self.dt_str}/{step_name}_click_error.png")
 
             if max_count and count == max_count:
