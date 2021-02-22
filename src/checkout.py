@@ -5,9 +5,9 @@ from utils import logger
 from Bot import StockBot
 import os
 from decouple import config as env_config
+from datetime import datetime
 
 def main(args):
-    logging = logger.create_logger()
     if args['bestbuy']:
         config_file_path = "./configs/bestbuy_config.json"
     elif args['walmart']:
@@ -18,10 +18,13 @@ def main(args):
     with open(config_file_path) as file:
         config = json.load(file)
     products = config['products']
+    now = datetime.now()
+    dt_string = now.strftime("%m%d%Y-%H:%M:%S")
+    logging = logger.create_logger(dt_string)
     site_name = config_file_path.split("/")[-1].split("_config.json")[0]
     bot = StockBot(site=site_name, username=env_config(f"{site_name.upper()}_USERNAME"), password=env_config(f"{site_name.upper()}_PASSWORD"), 
                     website_dict=config['website'], product_dict=products[0], 
-                    logger=logging, cvv_code=env_config("CVV"), max_price=env_config("MAX_PRICE"), 
+                    logger=logging, cvv_code=env_config("CVV"), dt_str=dt_string, max_price=env_config("MAX_PRICE"), 
                     headless=args['headless'], test_mode=args['test_mode'])
     bot.run()
 

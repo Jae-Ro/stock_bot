@@ -9,7 +9,7 @@ import os
 import json
 
 class StockBot():
-    def __init__(self, site, username, password, website_dict, product_dict, logger, cvv_code, max_price=550.00, headless=False, test_mode=True):
+    def __init__(self, site, username, password, website_dict, product_dict, logger, cvv_code, dt_str, max_price=550.00, headless=False, test_mode=True):
         self.site_name = site
         self.username = username
         self.password = password
@@ -19,6 +19,7 @@ class StockBot():
         self.test_mode = test_mode
         self.cvv_code = str(cvv_code)
         self.max_price = float(max_price)
+        self.dt_str = dt_str
         # options = webdriver.ChromeOptions()
         # self.driver = webdriver.Chrome(chrome_options=options)
         options = webdriver.FirefoxOptions()
@@ -127,7 +128,7 @@ class StockBot():
     def checkout(self, checkout_btn, fulfillment_btn, confirm_delivery_btn, security_code_field, 
                 security_code, confirm_payment_btn, place_order_btn):
         self.logging.info(f"Starting Checkout of {self.product['name']}")
-        self.wait_click(checkout_btn)
+        self.wait_click(checkout_btn, step_name="checkout")
         if self.site_name =="walmart":
             self.wait_click(fulfillment_btn)
             self.wait_click(confirm_delivery_btn)
@@ -167,7 +168,7 @@ class StockBot():
             dom_obj = self.driver.find_element_by_xpath(selector_obj['selector'])
         return dom_obj
     
-    def wait_click(self, selector_obj, max_count=None, refresh=False):
+    def wait_click(self, selector_obj, max_count=None, refresh=False, step_name=""):
         count = 0
         while True:
             try:
@@ -179,6 +180,9 @@ class StockBot():
                 if count % 1000 == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
+                elif count % 100 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error.png"):
+                    self.driver.get_screenshot_as_file(f"../screenshots/{self.dt_str}/{step_name}_click_error.png")
+
             if max_count and count == max_count:
                 return False
             count +=1

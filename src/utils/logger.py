@@ -1,13 +1,13 @@
 import logging
 import os
 
-def create_logger():
+def create_logger(dt_str):
     # Initital Logger Setup
     logger = logging.getLogger("stock_bot")
     logger.setLevel(logging.DEBUG)
 
     # File Logging
-    file_log_handler = logging.FileHandler("stock_bot.log")
+    file_log_handler = logging.FileHandler(f"../logs/stock_bot_{dt_str}.log")
     file_log_handler.setFormatter(logging.Formatter("%(asctime)s %(filename)s [%(levelname)4s] %(message)s"))
     file_log_handler.setLevel(logging.DEBUG)
 
