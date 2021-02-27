@@ -182,13 +182,14 @@ class StockBot():
                 btn.click()
                 break
             except:
-                self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
+                if count <=10:
+                    self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
                 if count % 200 == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
                     if func and func_dict:
                         func(func_dict)
-                elif count % 100 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error_{self.dt_str}.png"):
+                elif count % 20 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error_{self.dt_str}.png"):
                     self.logging.info("Taking Screenshot")
                     self.driver.get_screenshot_as_file(f"../screenshots/{step_name}_click_error_{self.dt_str}.png")
 
