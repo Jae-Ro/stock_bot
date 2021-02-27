@@ -1,14 +1,29 @@
 {
     "products": [
         {
-            "name": "PlayStation-5-Console",
-            "description": "Disk version of the PS5 Console",
-            "product_url": "https://www.walmart.com/ip/PlayStation-5-Console/363472942"
+            "name": "Apple Airpods",
+            "description": "Apple AirPods with Charging Case (Latest Model)",
+            "product_url": "https://www.walmart.com/ip/Apple-AirPods-with-Charging-Case-Latest-Model/604342441",
+            "keywords": [
+                "apple",
+                "airpods",
+                "air",
+                "pods"
+            ]
         },
         {
             "name": "PlayStation-5-Console",
             "description": "Disk version of the PS5 Console",
-            "product_url": "https://www.walmart.com/ip/PlayStation-5-Console/363472942"
+            "product_url": "https://www.walmart.com/ip/PlayStation-5-Console/363472942",
+            "keywords": [
+                "disk",
+                "sony",
+                "ps5",
+                "playstation",
+                "play",
+                "station",
+                "five"
+            ]
         }
     ],
     "website": {
