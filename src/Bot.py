@@ -20,8 +20,6 @@ class StockBot():
         self.cvv_code = str(cvv_code)
         self.max_price = float(max_price)
         self.dt_str = dt_str
-        # options = webdriver.ChromeOptions()
-        # self.driver = webdriver.Chrome(chrome_options=options)
         options = webdriver.FirefoxOptions()
         if headless:
             options.add_argument("--headless")
@@ -189,7 +187,7 @@ class StockBot():
                     self.driver.refresh()
                     if func and func_dict:
                         func(func_dict)
-                elif count % 20 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error_{self.dt_str}.png"):
+                elif count % 30 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error_{self.dt_str}.png"):
                     self.logging.info("Taking Screenshot")
                     self.driver.get_screenshot_as_file(f"../screenshots/{step_name}_click_error_{self.dt_str}.png")
 
