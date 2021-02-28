@@ -175,8 +175,8 @@
         },
         "place_order_btn_obj": {
             "name": "place-order-button",
-            "selector": "",
-            "selector_type": "css_selector"
+            "selector": "btnCreditCard",
+            "selector_type": "id"
         },
         "delivery_date_continue_btn_obj": {},
         "confirm_delivery_address_continue_btn_obj": {

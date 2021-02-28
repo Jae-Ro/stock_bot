@@ -215,7 +215,6 @@ class StockBot():
             dom_objs = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_all_elements_located((By.XPATH, selector_obj['selector'])))
         return dom_objs
 
-    
     def wait_click(self, selector_obj, btn=None, func=None, func_dict=None, max_count=None,
                     notif_count=10, refresh=False, refresh_count=200, shot_count=200, step_name=""):
         count = 0
