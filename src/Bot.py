@@ -7,6 +7,9 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
 import os
 import json
+import sys, traceback
+import random
+from selenium.webdriver.common.action_chains import ActionChains 
 
 class StockBot():
     def __init__(self, site, username, password, website_dict, product_dict, logger, cvv_code, dt_str, max_price=550.00, headless=False, test_mode=True):
@@ -81,26 +84,26 @@ class StockBot():
             
             self.add_to_cart(self.website['cart_btn_obj'], self.website['product_price_obj'], self.max_price)
             self.navigate(self.website['cart_url'])
-            self.checkout(
-                self.website['checkout_btn_obj'],
-                self.website['delivery_date_continue_btn_obj'],
-                self.website['confirm_delivery_address_continue_btn_obj'],
-                self.website['cvv_security_field_obj'],
-                self.cvv_code,
-                self.website['review_order_btn_obj'],
-                self.website['place_order_btn_obj'])
+            self.checkout(self.website['checkout_btn_obj'], self.website['cvv_security_field_obj'], self.cvv_code, self.website['place_order_btn_obj'])
             self.finish()
         except Exception as e:
-            print(e)
+            self.logging.debug(f"{traceback.print_exc()}")
             self.finish()
 
     def login(self, username_obj, password_obj, submit_obj):
-        self.logging.info('Starting to Login to Walmart Account')
-        self.wait_type(username_obj, self.username)
-        self.wait_type(password_obj, self.password)
-        self.wait_click(submit_obj)
+        self.logging.info(f'Starting to Login to {self.site_name} Account')
+        if self.site_name == "newegg":
+            self.wait_click(self.website['signin_btn_obj'], step_name="signin-btn")
+            self.wait_type(username_obj, self.username, step_name="login-username-field")
+            self.wait_click(submit_obj, step_name="login-submit-btn")
+            # self.wait_type(password_obj, self.password)
+            # self.wait_click(submit_obj)
+        else:
+            self.wait_type(username_obj, self.username, step_name="login-username-field")
+            self.wait_type(password_obj, self.password, step_name="login-password-field")
+            self.wait_click(submit_obj, step_name="login-submit-btn")
         self.logging.info(f'Successfully Logged into {self.site_name} Account')
-        time.sleep(5)
+        time.sleep(35)
         # Store cookies
         with open(f"{self.site_name}_cookies.json", 'w') as filehandler:
             json.dump(self.driver.get_cookies(), filehandler)
@@ -109,10 +112,10 @@ class StockBot():
     def price_check(self, kwarg_dict):
         price_selector_obj, max_price = kwarg_dict['price_selector_obj'], kwarg_dict['max_price']
         self.logging.info(f"Checking Price of {self.product['name']}")
-        price = self.get_dom_obj(price_selector_obj).get_attribute(price_selector_obj["attribute"])
+        price = self.query_selector(price_selector_obj).get_attribute(price_selector_obj["attribute"])
         if self.site_name == "walmart":
             price = price.split("\n")[0].split("$")[-1]
-        elif self.site_name == "bestbuy":
+        elif self.site_name == "bestbuy" or self.site_name == "newegg":
             price = price.split("$")[-1]
         price = float(price)
         self.logging.info(f"Price of {self.product['name']}: ${price}")
@@ -126,24 +129,53 @@ class StockBot():
         self.logging.info(f"Adding {self.product['name']} to Cart")
         price_dict = {"price_selector_obj": price_selector_obj, "max_price": max_price}
         self.price_check(price_dict)
-        self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, step_name="addtocart")
+        self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=300,
+                        shot_count=300, step_name="addtocart-btn")
         return
 
-    def checkout(self, checkout_btn, fulfillment_btn, confirm_delivery_btn, security_code_field, 
-                security_code, confirm_payment_btn, place_order_btn):
+    def find_element_with_text(self, elements, text, attribute):
+        for el in elements:
+            el_text = el.get_attribute(attribute)
+            if text in el_text.lower():
+                return el
+        return None
+
+    def checkout(self, checkout_btn, security_code_field, security_code, place_order_btn):
         self.logging.info(f"Starting Checkout of {self.product['name']}")
-        self.wait_click(checkout_btn, step_name="checkout")
+        self.wait_click(checkout_btn, refresh_count=300, refresh=True, shot_count=300, step_name="checkout-btn")
+        
+        # Website-sepcific Checkout Procedure
         if self.site_name =="walmart":
-            self.wait_click(fulfillment_btn)
-            self.wait_click(confirm_delivery_btn)
-            self.wait_type(security_code_field, security_code)
-            self.wait_click(confirm_payment_btn)
+            self.wait_click(self.website['delivery_date_continue_btn_obj'], step_name="fulfillment-btn")
+            self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], step_name="confirm-address-btn")
+            self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
+            self.wait_click(self.website['review_order_btn_obj'], step_name="review-order-btn")
+       
         elif self.site_name == "bestbuy":
-            if self.wait_type(self.website['password_field_obj'], self.password, max_count=5):
-                self.wait_click(self.website['login_submit_btn_obj'], max_count=1)
-            self.wait_type(security_code_field, security_code)
+            if self.wait_type(self.website['password_field_obj'], self.password, max_count=10, shot_count=10, step_name="checkout-relogin-password-field"):
+                self.wait_click(self.website['login_submit_btn_obj'], max_count=10, shot_count=10, step_name="checkout-relogin-submit-btn")
+            self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
+       
+        elif self.site_name == "newegg":
+            if self.wait_click(self.website['login_submit_btn_obj'], max_count=500, shot_count=500, step_name="checkout-relogin-submit-btn"):
+                self.wait_type(self.website['password_field_obj'], self.password, step_name="checkout-relogin-password-field")
+                self.wait_click(self.website['login_submit_btn_obj'], step_name="checkout-relogin-submit-btn")
+                time.sleep(0.5)
+                btn_list = self.query_selector_all(self.website['confirm_delivery_address_continue_btn_obj'], timeout=10)
+                confirm_delivery_btn = self.find_element_with_text(btn_list, "continue to payment", self.website['confirm_delivery_address_continue_btn_obj']['attribute'])
+                if confirm_delivery_btn:
+                    self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], btn=confirm_delivery_btn, step_name="confirm-delivery-btn")
+                self.wait_type(security_code_field, security_code,  human_mode=True, step_name="cvv-security-code-field")
+                btn_list = self.query_selector_all(self.website['confirm_delivery_address_continue_btn_obj'], timeout=10)
+                review_order_btn = self.find_element_with_text(btn_list, "review your order", self.website['review_order_btn_obj']['attribute'])
+                if review_order_btn:
+                    self.wait_click(self.website['review_order_btn_obj'], btn=review_order_btn, step_name="review-order-btn")
+            else:
+                self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
+        
+        # Place Order or end Test Mode
         if not self.test_mode:
-            self.wait_click(place_order_btn)
+            self.wait_click(place_order_btn, step_name="place_order-btn")
             self.logging.info(f"Your order of {self.product['name']} was succesfully placed. MISSION COMPLETE!!!!")
         else:
             self.logging.info(f"This is the end of the line for the --test_mode. Wait 10 seconds and program will terminate.")
@@ -161,7 +193,7 @@ class StockBot():
         self.driver.get(url)
         return
 
-    def get_dom_obj(self, selector_obj, timeout=1, poll_freq=0.0001):
+    def query_selector(self, selector_obj, timeout=1, poll_freq=0.0001):
         if selector_obj['selector_type'] == "css_selector":
             dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "id":
@@ -169,46 +201,81 @@ class StockBot():
         elif selector_obj['selector_type'] == "class_name":
             dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.CLASS_NAME, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "xpath":
-            dom_obj = self.driver.find_element_by_xpath(selector_obj['selector'])
+            dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.XPATH, selector_obj['selector'])))
         return dom_obj
     
-    def wait_click(self, selector_obj, func=None, func_dict=None, max_count=None, refresh=False, step_name=""):
+    def query_selector_all(self, selector_obj, timeout=1, poll_freq=0.0001):
+        if selector_obj['selector_type'] == "css_selector":
+            dom_objs = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_obj['selector'])))
+        elif selector_obj['selector_type'] == "id":
+            dom_objs = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_all_elements_located((By.ID, selector_obj['selector'])))
+        elif selector_obj['selector_type'] == "class_name":
+            dom_objs = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_all_elements_located((By.CLASS_NAME, selector_obj['selector'])))
+        elif selector_obj['selector_type'] == "xpath":
+            dom_objs = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_all_elements_located((By.XPATH, selector_obj['selector'])))
+        return dom_objs
+
+    
+    def wait_click(self, selector_obj, btn=None, func=None, func_dict=None, max_count=None,
+                    notif_count=10, refresh=False, refresh_count=200, shot_count=200, step_name=""):
         count = 0
         while True:
             try:
-                btn = self.get_dom_obj(selector_obj)
+                if btn is None:
+                    btn = self.query_selector(selector_obj)
                 btn.click()
                 break
             except:
-                if count <=10:
+                if count <= notif_count:
                     self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
-                if count % 200 == 0 and count != 0 and refresh:
+                    if count == notif_count:
+                        self.logging.info("...")
+                if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
                     if func and func_dict:
                         func(func_dict)
-                elif count % 30 == 0 and count != 0 and not os.path.exists(f"../screenshots/{step_name}_click_error_{self.dt_str}.png"):
+                    count = 0
+                if count % shot_count == 0 and count != 0 and not os.path.exists(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png"):
                     self.logging.info("Taking Screenshot")
-                    self.driver.get_screenshot_as_file(f"../screenshots/{step_name}_click_error_{self.dt_str}.png")
-
+                    self.driver.get_screenshot_as_file(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png")
+                    count = 0
             if max_count and count == max_count:
                 return False
             count +=1
         self.logging.info(f'Successfully Clicked {selector_obj["name"]}')
         return True
     
-    def wait_type(self, selector_obj, text, max_count=None, refresh=False):
+    def wait_type(self, selector_obj, text, max_count=None, notif_count=10, refresh=False, 
+                    refresh_count=200, shot_count=200, step_name="",  human_mode=False):
         count = 0
         while True:
             try:
-                field = self.get_dom_obj(selector_obj)
-                field.send_keys(text)
+                field = self.query_selector(selector_obj)
+                if human_mode:
+                    self.action_chain = ActionChains(self.driver)
+                    self.action_chain.click(field)
+                    for char in text:
+                        self.action_chain.send_keys(char)
+                        time.sleep(random.uniform(0.05,0.1))
+                    self.action_chain.perform()
+                    self.action_chain.reset_actions()
+                else:
+                    field.send_keys(text)
                 break
             except:
-                self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
-                if count % 1000 == 0 and count != 0 and refresh:
+                if count <= notif_count:
+                    self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
+                    if count == notif_count:
+                        self.logging.info("...")
+                if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
+                    count = 0
+                if count % shot_count == 0 and count != 0 and not os.path.exists(f"../screenshots/{self.site_name}_{step_name}_typeerror_{self.dt_str}.png"):
+                    self.logging.info("Taking Screenshot")
+                    self.driver.get_screenshot_as_file(f"../screenshots/{self.site_name}_{step_name}_typeerror_{self.dt_str}.png")
+                    count = 0
             if max_count and count == max_count:
                 return False
             count +=1

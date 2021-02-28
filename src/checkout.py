@@ -29,22 +29,30 @@ def search_product_list(product_list, search_string):
         if len(matches) > max_match:
             max_match = len(matches)
             max_index = i
+    
     return max_index
 
 def main(args):
-    if not args['all_products']:
-        if args['bestbuy']:
-            config_file_path = "./configs/bestbuy_config.json"
-        elif args['walmart']:
-            config_file_path="./configs/walmart_config.json"
+    try:
+        if not args['all_products']:
+            if args['bestbuy']:
+                config_file_path = "./configs/bestbuy_config.json"
+            elif args['walmart']:
+                config_file_path="./configs/walmart_config.json"
+            elif args['bandh']:
+                config_file_path="./configs/bandh_config.json"
+            elif args['newegg']:
+                config_file_path="./configs/newegg_config.json"
+            else:
+                logging.info("No website was selected. Terminating Program.")
+                return
+            with open(config_file_path) as file:
+                config = json.load(file)
+            product_index = search_product_list(config['products'], args['product'])
+            start_run(config, config_file_path, product_index, args)
         else:
-            logging.info("No website was selected. Terminating Program.")
-            return
-        with open(config_file_path) as file:
-            config = json.load(file)
-        product_index = search_product_list(config['products'], args['product'])
-        start_run(config, config_file_path, product_index, args)
-    else:
+            pass
+    except:
         pass
 
 
@@ -54,6 +62,8 @@ if __name__== "__main__":
     parser.add_argument("--headless", help="use this flag to turn on headless mode. Defaults to False unlesss used", action="store_true")
     parser.add_argument("--walmart", help="use this flag to turn on walmart bot. Defaults to False unlesss used", action="store_true")
     parser.add_argument("--bestbuy", help="use this flag to turn on bestbuy bot. Defaults to False unlesss used", action="store_true")
+    parser.add_argument("--newegg", help="use this flag to turn on newegg bot. Defaults to False unlesss used", action="store_true")
+    parser.add_argument("--bandh", help="use this flag to turn on bandh bot. Defaults to False unlesss used", action="store_true")
     parser.add_argument("--max_price", help="set max price willing to pay", default=env_config('MAX_PRICE'))
     parser.add_argument("--product", help="type in what product you're looking for", default="ps5 disk")
     parser.add_argument("--all_products", help="use this flag to turn on searching for all products you have listed in the config for the stores you are searching", action="store_true")

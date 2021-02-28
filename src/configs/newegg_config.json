@@ -1,0 +1,210 @@
+{
+    "products": [
+        {
+            "name": "Apple Airpods",
+            "description": "Apple - AirPods with Charging Case (Latest Model) - White",
+            "product_url": "https://www.newegg.com/dyson-248392-01/p/0JA-000S-00039?Item=9SIADVW7C18189",
+            "keywords": [
+                "apple",
+                "airpods",
+                "air",
+                "pods"
+            ]
+        },
+        {
+            "name": "Sony-Playstation-5-Console",
+            "description": "Disk version of the PS5 Console",
+            "product_url": "",
+            "keywords": [
+                "disk",
+                "sony",
+                "ps5",
+                "playstation",
+                "play",
+                "station",
+                "five"
+            ]
+        },
+        {
+            "name": "NVIDIA RTX 3080 Founders Edition",
+            "description": "NVIDIA GeForce RTX 3080 10GB GDDR6X PCI Express 4.0 Graphics Card - Titanium and Black",
+            "product_url": "",
+            "keywords": [
+                "nvidia",
+                "rtx",
+                "3080",
+                "founders",
+                "edition"
+            ]
+        },
+        {
+            "name": "ASUS RTX 3080 ROG STRIX",
+            "description": "ASUS - GeForce RTX 3080 10GB GDDR6X PCI Express 4.0 Strix Graphics Card - Black",
+            "product_url": "",
+            "keywords": [
+                "asus",
+                "rtx",
+                "3080",
+                "rog",
+                "strix"
+            ]
+        },
+        {
+            "name": "GIGABYTE RTX 3080",
+            "description": "GIGABYTE - NVIDIA GeForce RTX 3080 GAMING OC 10GB GDDR6X PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "gigabyte",
+                "rtx",
+                "3080"
+            ]
+        },
+        {
+            "name": "GIGABYTE RTX 3080 VISION",
+            "description": "GIGABYTE - NVIDIA GeForce RTX 3080 VISION OC 10GB GDDR6X PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "gigabyte",
+                "rtx",
+                "3080",
+                "vision"
+            ]
+        },
+        {
+            "name": "EVGA RTX 3080 XC3 ULTRA GAMING",
+            "description": "EVGA - GeForce RTX 3080 XC3 ULTRA GAMING 10GB GDDR6 PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "evga",
+                "rtx",
+                "3080",
+                "xc3",
+                "ultra",
+                "gaming"
+            ]
+        },
+        {
+            "name": "MSI RTX 3080 VENTUS 3X",
+            "description": "MSI - NVIDIA Geforce RTX 3080 VENTUS 3X 10G OC BV - GDDR6X - PCI Express 4.0 - Graphic Card - Black/Silver",
+            "product_url": "",
+            "keywords": [
+                "msi",
+                "rtx",
+                "3080",
+                "ventus",
+                "3X"
+            ]
+        },
+        {
+            "name": "NVIDIA RTX 3090 Founders Edition",
+            "description": "NVIDIA GeForce RTX 3090 24GB GDDR6X PCI Express 4.0 Graphics Card - Titanium and Black",
+            "product_url": "",
+            "keywords": [
+                "nvidia",
+                "rtx",
+                "3090",
+                "founders",
+                "edition"
+            ]
+        },
+        {
+            "name": "ASUS RTX 3090 ROG STRIX",
+            "description": "ASUS - GeForce RTX 3090 24GB GDDR6X PCI Express 4.0 Strix Graphics Card - Black",
+            "product_url": "",
+            "keywords": [
+                "asus",
+                "rtx",
+                "3090",
+                "rog",
+                "strix"
+            ]
+        },
+        {
+            "name": "ASUS TUF RTX 3090",
+            "description": "ASUS - TUF RTX 3090 24GB GDDR6X PCI Express 4.0 Graphics Card - Black",
+            "product_url": "",
+            "keywords": [
+                "asus",
+                "rtx",
+                "3090",
+                "tuf"
+            ]
+        },
+        {
+            "name": "EVGA RTX 3090 XC3 ULTRA GAMING",
+            "description": "EVGA - GeForce RTX 3090 XC3 ULTRA GAMING 24GB GDDR6 PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "evga",
+                "rtx",
+                "3090",
+                "xc3",
+                "ultra",
+                "gaming"
+            ]
+        }
+    ],
+    "website": {
+        "login_url": "https://www.newegg.com/",
+        "signin_btn_obj": {
+            "name": "signin-btn",
+            "selector": "/html/body/div[8]/header/div[1]/div[4]/div[1]/div[1]/a",
+            "selector_type": "xpath"
+        },
+        "cart_url": "https://secure.newegg.com/shop/cart",
+        "product_price_obj": {
+            "name": "price-field",
+            "selector": "li[class='price-current']",
+            "selector_type": "css_selector",
+            "attribute": "innerText"
+        },
+        "cart_btn_obj": {
+            "name": "add-to-cart-button",
+            "selector": "button[class='btn btn-primary btn-wide']",
+            "selector_type": "css_selector"
+        },
+        "checkout_btn_obj": {
+            "name": "checkout-button",
+            "selector": "button[class='btn btn-primary btn-wide']",
+            "selector_type": "css_selector"
+        },
+        "cvv_security_field_obj": {
+            "name": "credit-card-security-code-field",
+            "selector": "input[class='form-text mask-cvv-4']",
+            "selector_type": "css_selector"
+        },
+        "place_order_btn_obj": {
+            "name": "place-order-button",
+            "selector": "",
+            "selector_type": "css_selector"
+        },
+        "delivery_date_continue_btn_obj": {},
+        "confirm_delivery_address_continue_btn_obj": {
+            "name": "confirm-delivery-button",
+            "selector": "button[class='btn btn-primary checkout-step-action-done layout-quarter']",
+            "selector_type": "css_selector",
+            "attribute": "innerText"
+        },
+        "review_order_btn_obj": {
+            "name": "review-order-button",
+            "selector": "button[class='btn btn-primary checkout-step-action-done layout-quarter']",
+            "selector_type": "css_selector",
+            "attribute": "innerText"
+        },
+        "username_field_obj": {
+            "name": "username-field",
+            "selector": "labeled-input-signEmail",
+            "selector_type": "id"
+        },
+        "password_field_obj": {
+            "name": "password-field",
+            "selector": "labeled-input-password",
+            "selector_type": "id"
+        },
+        "login_submit_btn_obj": {
+            "name": "submit-button",
+            "selector": "signInSubmit",
+            "selector_type": "id"
+        }
+    }
+}
