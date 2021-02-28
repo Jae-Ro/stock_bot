@@ -160,19 +160,20 @@ class StockBot():
             if self.wait_click(self.website['login_submit_btn_obj'], max_count=500, shot_count=500, step_name="checkout-relogin-submit-btn"):
                 self.wait_type(self.website['password_field_obj'], self.password, step_name="checkout-relogin-password-field")
                 self.wait_click(self.website['login_submit_btn_obj'], step_name="checkout-relogin-submit-btn")
-                time.sleep(0.5)
-                btn_list = self.query_selector_all(self.website['confirm_delivery_address_continue_btn_obj'], timeout=10)
-                confirm_delivery_btn = self.find_element_with_text(btn_list, "continue to payment", self.website['confirm_delivery_address_continue_btn_obj']['attribute'])
-                if confirm_delivery_btn:
-                    self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], btn=confirm_delivery_btn, step_name="confirm-delivery-btn")
-                self.wait_type(security_code_field, security_code,  human_mode=True, step_name="cvv-security-code-field")
-                btn_list = self.query_selector_all(self.website['confirm_delivery_address_continue_btn_obj'], timeout=10)
-                review_order_btn = self.find_element_with_text(btn_list, "review your order", self.website['review_order_btn_obj']['attribute'])
-                if review_order_btn:
-                    self.wait_click(self.website['review_order_btn_obj'], btn=review_order_btn, step_name="review-order-btn")
-            else:
-                self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
+            time.sleep(0.5)
+            btn_list = self.query_selector_all(self.website['confirm_delivery_address_continue_btn_obj'], timeout=10)
+            confirm_delivery_btn = self.find_element_with_text(btn_list, "continue to payment", self.website['confirm_delivery_address_continue_btn_obj']['attribute'])
+            if confirm_delivery_btn:
+                self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], btn=confirm_delivery_btn, step_name="confirm-delivery-btn")
+            self.wait_type(security_code_field, security_code,  human_mode=True, step_name="cvv-security-code-field")
+            btn_list = self.query_selector_all(self.website['confirm_delivery_address_continue_btn_obj'], timeout=10)
+            review_order_btn = self.find_element_with_text(btn_list, "review your order", self.website['review_order_btn_obj']['attribute'])
+            if review_order_btn:
+                self.wait_click(self.website['review_order_btn_obj'], btn=review_order_btn, step_name="review-order-btn")
         
+        elif self.site_name == "bandh":
+            pass
+
         # Place Order or end Test Mode
         if not self.test_mode:
             self.wait_click(place_order_btn, step_name="place_order-btn")
