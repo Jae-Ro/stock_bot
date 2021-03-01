@@ -13,7 +13,7 @@ def start_run(config, config_path, product_index, args):
     dt_string = now.strftime("%m%d%Y-%H:%M:%S")
     site_name = config_path.split("/")[-1].split("_config.json")[0]
     loging_name = f"{products[product_index]['name']} - {site_name.upper()}"
-    logging = logger.create_logger(dt_string, loging_name)
+    logging = logger.create_logger(dt_string, loging_name, site_name)
     bot = StockBot(site=site_name, username=env_config(f"{site_name.upper()}_USERNAME"), password=env_config(f"{site_name.upper()}_PASSWORD"), 
                     website_dict=config['website'], product_dict=products[product_index], 
                     logger=logging, cvv_code=env_config("CVV"), dt_str=dt_string, max_price=args['max_price'], 
