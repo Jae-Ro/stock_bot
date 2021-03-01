@@ -28,6 +28,8 @@ class StockBot():
         options = webdriver.FirefoxOptions()
         if headless:
             options.add_argument("--headless")
+            options.add_argument('window-size=1920x1480')
+
         profile = webdriver.FirefoxProfile()
         profile.set_preference("network.http.pipelining", True)
         profile.set_preference("network.http.proxy.pipelining", True)
@@ -65,7 +67,7 @@ class StockBot():
         caps = DesiredCapabilities().FIREFOX
         caps["pageLoadStrategy"] = "eager"
         self.driver = webdriver.Firefox(firefox_profile=profile, desired_capabilities=caps, options=options)
-        self.driver.maximize_window()
+        self.driver.set_window_size(1920, 1080)
         self.start = None
     
     def run(self):
@@ -156,22 +158,23 @@ class StockBot():
 
     def checkout(self, checkout_btn, security_code_field, security_code, place_order_btn):
         self.logging.info(f"Starting Checkout of {self.product['name']}")
-        self.wait_click(checkout_btn, refresh_count=300, refresh=True, shot_count=300, human_mode=True, step_name="checkout-btn")
         shot_count, max_count = 30, 30
-
         # Website-sepcific Checkout Procedure
         if self.site_name =="walmart":
+            self.wait_click(checkout_btn, refresh_count=100, refresh=True, shot_count=100, step_name="checkout-btn")
             self.wait_click(self.website['delivery_date_continue_btn_obj'], step_name="fulfillment-btn")
             self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], step_name="confirm-address-btn")
             self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
             self.wait_click(self.website['review_order_btn_obj'], step_name="review-order-btn")
             
         elif self.site_name == "bestbuy":
+            self.wait_click(checkout_btn, refresh_count=100, refresh=True, shot_count=20, step_name="checkout-btn")
             if self.wait_type(self.website['password_field_obj'], self.password, max_count=10, shot_count=10, human_mode=True, step_name="checkout-relogin-password-field"):
                 self.wait_click(self.website['login_submit_btn_obj'], max_count=10, shot_count=10, step_name="checkout-relogin-submit-btn")
             self.wait_type(security_code_field, security_code, shot_count=30, max_count=30, step_name="cvv-security-code-field")
        
         elif self.site_name == "newegg":
+            self.wait_click(checkout_btn, refresh_count=300, refresh=True, shot_count=100, step_name="checkout-btn")
             if self.wait_click(self.website['login_submit_btn_obj'], max_count=500, shot_count=500, step_name="checkout-relogin-submit-btn"):
                 self.wait_type(self.website['password_field_obj'], self.password, step_name="checkout-relogin-password-field")
                 self.wait_click(self.website['login_submit_btn_obj'], step_name="checkout-relogin-submit-btn")
@@ -188,6 +191,7 @@ class StockBot():
             shot_count, max_count = 400, 500
         
         elif self.site_name == "bandh":
+            self.wait_click(checkout_btn, refresh_count=10, refresh=True, shot_count=10, human_mode=True, step_name="checkout-btn")
             if self.wait_type(self.website['username_field_obj'], self.username, max_count=3, shot_count=3, human_mode=True, step_name="login-username-field"):
                 self.wait_type(self.website['password_field_obj'], self.password, step_name="login-password-field")
                 self.wait_click(self.website['login_checkout_btn_obj'], step_name="login-checkout-btn")
