@@ -1,0 +1,228 @@
+{
+    "products": [
+        {
+            "name": "Apple Airpods",
+            "description": "Apple - AirPods with Charging Case (Latest Model) - White",
+            "product_url": "https://www.bhphotovideo.com/c/product/1469202-REG/apple_mv7n2am_a_airpods_with_charging_case.html",
+            "keywords": [
+                "apple",
+                "airpods",
+                "air",
+                "pods"
+            ]
+        },
+        {
+            "name": "Sony-Playstation-5-Console",
+            "description": "Disk version of the PS5 Console",
+            "product_url": "",
+            "keywords": [
+                "disk",
+                "sony",
+                "ps5",
+                "playstation",
+                "play",
+                "station",
+                "five"
+            ]
+        },
+        {
+            "name": "NVIDIA RTX 3080 Founders Edition",
+            "description": "NVIDIA GeForce RTX 3080 10GB GDDR6X PCI Express 4.0 Graphics Card - Titanium and Black",
+            "product_url": "",
+            "keywords": [
+                "nvidia",
+                "rtx",
+                "3080",
+                "founders",
+                "edition"
+            ]
+        },
+        {
+            "name": "ASUS RTX 3080 ROG STRIX",
+            "description": "ASUS - GeForce RTX 3080 10GB GDDR6X PCI Express 4.0 Strix Graphics Card - Black",
+            "product_url": "",
+            "keywords": [
+                "asus",
+                "rtx",
+                "3080",
+                "rog",
+                "strix"
+            ]
+        },
+        {
+            "name": "GIGABYTE RTX 3080",
+            "description": "GIGABYTE - NVIDIA GeForce RTX 3080 GAMING OC 10GB GDDR6X PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "gigabyte",
+                "rtx",
+                "3080"
+            ]
+        },
+        {
+            "name": "GIGABYTE RTX 3080 VISION",
+            "description": "GIGABYTE - NVIDIA GeForce RTX 3080 VISION OC 10GB GDDR6X PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "gigabyte",
+                "rtx",
+                "3080",
+                "vision"
+            ]
+        },
+        {
+            "name": "EVGA RTX 3080 XC3 ULTRA GAMING",
+            "description": "EVGA - GeForce RTX 3080 XC3 ULTRA GAMING 10GB GDDR6 PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "evga",
+                "rtx",
+                "3080",
+                "xc3",
+                "ultra",
+                "gaming"
+            ]
+        },
+        {
+            "name": "MSI RTX 3080 VENTUS 3X",
+            "description": "MSI - NVIDIA Geforce RTX 3080 VENTUS 3X 10G OC BV - GDDR6X - PCI Express 4.0 - Graphic Card - Black/Silver",
+            "product_url": "",
+            "keywords": [
+                "msi",
+                "rtx",
+                "3080",
+                "ventus",
+                "3X"
+            ]
+        },
+        {
+            "name": "NVIDIA RTX 3090 Founders Edition",
+            "description": "NVIDIA GeForce RTX 3090 24GB GDDR6X PCI Express 4.0 Graphics Card - Titanium and Black",
+            "product_url": "",
+            "keywords": [
+                "nvidia",
+                "rtx",
+                "3090",
+                "founders",
+                "edition"
+            ]
+        },
+        {
+            "name": "ASUS RTX 3090 ROG STRIX",
+            "description": "ASUS - GeForce RTX 3090 24GB GDDR6X PCI Express 4.0 Strix Graphics Card - Black",
+            "product_url": "",
+            "keywords": [
+                "asus",
+                "rtx",
+                "3090",
+                "rog",
+                "strix"
+            ]
+        },
+        {
+            "name": "ASUS TUF RTX 3090",
+            "description": "ASUS - TUF RTX 3090 24GB GDDR6X PCI Express 4.0 Graphics Card - Black",
+            "product_url": "",
+            "keywords": [
+                "asus",
+                "rtx",
+                "3090",
+                "tuf"
+            ]
+        },
+        {
+            "name": "EVGA RTX 3090 XC3 ULTRA GAMING",
+            "description": "EVGA - GeForce RTX 3090 XC3 ULTRA GAMING 24GB GDDR6 PCI Express 4.0 Graphics Card",
+            "product_url": "",
+            "keywords": [
+                "evga",
+                "rtx",
+                "3090",
+                "xc3",
+                "ultra",
+                "gaming"
+            ]
+        }
+    ],
+    "website": {
+        "login_url": "https://www.bhphotovideo.com/find/loginIframe.jsp",
+        "cart_url": "https://www.bhphotovideo.com/find/cart.jsp",
+        "product_price_obj": {
+            "name": "price-field",
+            "selector": "div[data-selenium='pricingPrice']",
+            "selector_type": "css_selector",
+            "attribute": "innerText"
+        },
+        "cart_btn_obj": {
+            "name": "add-to-cart-button",
+            "selector": "button[data-selenium='addToCartButton']",
+            "selector_type": "css_selector"
+        },
+        "view_cart_btn_obj": {
+            "name": "view-cart-button",
+            "selector": "button[data-selenium='itemLayerViewCartBtn']",
+            "selector_type": "css_selector"
+        },
+        "checkout_btn_obj": {
+            "name": "checkout-button",
+            "selector": "input[data-selenium='checkoutLogin']",
+            "selector_type": "css_selector"
+        },
+        "place_order_btn_obj": {
+            "name": "place-order-button",
+            "selector": "button[data-selenium='placeOrder']",
+            "selector_type": "css_selector"
+        },
+        "delivery_date_continue_btn_obj": {},
+        "confirm_delivery_address_continue_btn_obj": {
+            "name": "confirm-delivery-button",
+            "selector": "button[data-selenium='continueFromShipping']",
+            "selector_type": "css_selector"
+        },
+        "review_order_btn_obj": {
+            "name": "review-order-button",
+            "selector": "button[data-selenium='reviewOrderButton']",
+            "selector_type": "css_selector"
+        },
+        "username_field_obj": {
+            "name": "username-field",
+            "selector": "input[data-selenium='emailAddress']",
+            "selector_type": "css_selector"
+        },
+        "password_field_obj": {
+            "name": "password-field",
+            "selector": "input[data-selenium='password']",
+            "selector_type": "css_selector"
+        },
+        "login_submit_btn_obj": {
+            "name": "submit-button",
+            "selector": "button[data-selenium='submitBtn']",
+            "selector_type": "css_selector"
+        },
+        "login_checkout_btn_obj": {
+            "name": "checkout-login-button",
+            "selector": "input[data-selenium='checkoutNoLogin']",
+            "selector_type": "css_selector"
+        },
+        "creditcard_month_field_obj": {
+            "name": "credit-card-month-field",
+            "selector": "select[name='ccExpMonth']",
+            "selector_type": "css_selector"
+        },
+        "creditcard_year_field_obj": {
+            "name": "credit-card-year-field",
+            "selector": "select[name='ccExpYear']",
+            "selector_type": "css_selector"
+        },
+        "creditcard_number_field_obj": {
+            "name": "credit-card-number-field",
+            "selector": "input[name='ccNumber']",
+            "selector_type": "css_selector"
+        },
+        "cvv_security_field_obj": {
+            "name": "credit-card-security-code-field",
+            "selector": "input[name='cCIDval']",
+            "selector_type": "css_selector"
+        }
+    }
+}

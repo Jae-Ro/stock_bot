@@ -9,7 +9,9 @@ import os
 import json
 import sys, traceback
 import random
-from selenium.webdriver.common.action_chains import ActionChains 
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.select import Select
+
 
 class StockBot():
     def __init__(self, site, username, password, website_dict, product_dict, logger, cvv_code, dt_str, max_price=550.00, headless=False, test_mode=True):
@@ -81,7 +83,8 @@ class StockBot():
                 cookies = json.load(cookiesfile)
                 for cookie in cookies:
                     self.driver.add_cookie(cookie)
-            
+            # if self.site_name=="bandh":
+            #     self.beat_bandh_bot_challenge()
             self.add_to_cart(self.website['cart_btn_obj'], self.website['product_price_obj'], self.max_price)
             self.navigate(self.website['cart_url'])
             self.checkout(self.website['checkout_btn_obj'], self.website['cvv_security_field_obj'], self.cvv_code, self.website['place_order_btn_obj'])
@@ -92,44 +95,55 @@ class StockBot():
 
     def login(self, username_obj, password_obj, submit_obj):
         self.logging.info(f'Starting to Login to {self.site_name} Account')
+        wait_time = 5
         if self.site_name == "newegg":
             self.wait_click(self.website['signin_btn_obj'], step_name="signin-btn")
             self.wait_type(username_obj, self.username, step_name="login-username-field")
             self.wait_click(submit_obj, step_name="login-submit-btn")
             # self.wait_type(password_obj, self.password)
             # self.wait_click(submit_obj)
+            wait_time = 35
         else:
             self.wait_type(username_obj, self.username, step_name="login-username-field")
             self.wait_type(password_obj, self.password, step_name="login-password-field")
             self.wait_click(submit_obj, step_name="login-submit-btn")
         self.logging.info(f'Successfully Logged into {self.site_name} Account')
-        time.sleep(35)
+        time.sleep(wait_time)
         # Store cookies
         with open(f"{self.site_name}_cookies.json", 'w') as filehandler:
             json.dump(self.driver.get_cookies(), filehandler)
         return
 
     def price_check(self, kwarg_dict):
-        price_selector_obj, max_price = kwarg_dict['price_selector_obj'], kwarg_dict['max_price']
-        self.logging.info(f"Checking Price of {self.product['name']}")
-        price = self.query_selector(price_selector_obj).get_attribute(price_selector_obj["attribute"])
-        if self.site_name == "walmart":
-            price = price.split("\n")[0].split("$")[-1]
-        elif self.site_name == "bestbuy" or self.site_name == "newegg":
-            price = price.split("$")[-1]
-        price = float(price)
-        self.logging.info(f"Price of {self.product['name']}: ${price}")
-        if price > max_price:
-            self.logging.info(f" Current Product Price: ${price} > Max Price Limit: ${max_price}. Exiting Program.")
-            raise ValueError
-        self.logging.info(f"Current Product Price: ${price} < Max Price Limit: ${max_price}. Let's Go!")
+        try:
+            price_selector_obj, max_price = kwarg_dict['price_selector_obj'], kwarg_dict['max_price']
+            self.logging.info(f"Checking Price of {self.product['name']}")
+            price = self.query_selector(price_selector_obj).get_attribute(price_selector_obj["attribute"])
+            if self.site_name == "walmart":
+                price = price.split("\n")[0].split("$")[-1]
+            else:
+                price = price.split("$")[-1]
+            price = float(price)
+            self.logging.info(f"Price of {self.product['name']}: ${price}")
+            if price > max_price:
+                self.logging.info(f" Current Product Price: ${price} > Max Price Limit: ${max_price}. Exiting Program.")
+                raise ValueError
+            self.logging.info(f"Current Product Price: ${price} < Max Price Limit: ${max_price}. Let's Go!")
+        except:
+            self.logging.info("Couldn't Complete Price Check")
+            pass
+
         return
 
     def add_to_cart(self, selector_obj, price_selector_obj, max_price):
         self.logging.info(f"Adding {self.product['name']} to Cart")
         price_dict = {"price_selector_obj": price_selector_obj, "max_price": max_price}
         self.price_check(price_dict)
-        self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=300,
+        if self.site_name == "bandh":
+            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=300,
+                        shot_count=300, human_mode=True, step_name="addtocart-btn")
+        else:
+            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=300,
                         shot_count=300, step_name="addtocart-btn")
         return
 
@@ -142,19 +156,20 @@ class StockBot():
 
     def checkout(self, checkout_btn, security_code_field, security_code, place_order_btn):
         self.logging.info(f"Starting Checkout of {self.product['name']}")
-        self.wait_click(checkout_btn, refresh_count=300, refresh=True, shot_count=300, step_name="checkout-btn")
-        
+        self.wait_click(checkout_btn, refresh_count=300, refresh=True, shot_count=300, human_mode=True, step_name="checkout-btn")
+        shot_count, max_count = 30, 30
+
         # Website-sepcific Checkout Procedure
         if self.site_name =="walmart":
             self.wait_click(self.website['delivery_date_continue_btn_obj'], step_name="fulfillment-btn")
             self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], step_name="confirm-address-btn")
             self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
             self.wait_click(self.website['review_order_btn_obj'], step_name="review-order-btn")
-       
+            
         elif self.site_name == "bestbuy":
-            if self.wait_type(self.website['password_field_obj'], self.password, max_count=10, shot_count=10, step_name="checkout-relogin-password-field"):
+            if self.wait_type(self.website['password_field_obj'], self.password, max_count=10, shot_count=10, human_mode=True, step_name="checkout-relogin-password-field"):
                 self.wait_click(self.website['login_submit_btn_obj'], max_count=10, shot_count=10, step_name="checkout-relogin-submit-btn")
-            self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
+            self.wait_type(security_code_field, security_code, shot_count=30, max_count=30, step_name="cvv-security-code-field")
        
         elif self.site_name == "newegg":
             if self.wait_click(self.website['login_submit_btn_obj'], max_count=500, shot_count=500, step_name="checkout-relogin-submit-btn"):
@@ -170,13 +185,18 @@ class StockBot():
             review_order_btn = self.find_element_with_text(btn_list, "review your order", self.website['review_order_btn_obj']['attribute'])
             if review_order_btn:
                 self.wait_click(self.website['review_order_btn_obj'], btn=review_order_btn, step_name="review-order-btn")
+            shot_count, max_count = 400, 500
         
         elif self.site_name == "bandh":
+            if self.wait_type(self.website['username_field_obj'], self.username, max_count=3, shot_count=3, human_mode=True, step_name="login-username-field"):
+                self.wait_type(self.website['password_field_obj'], self.password, step_name="login-password-field")
+                self.wait_click(self.website['login_checkout_btn_obj'], step_name="login-checkout-btn")
+                self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], max_count=10, shot_count=10, step_name="confirm-address-btn")
             pass
 
         # Place Order or end Test Mode
         if not self.test_mode:
-            self.wait_click(place_order_btn, step_name="place_order-btn")
+            self.wait_click(place_order_btn, shot_count=shot_count, max_count=max_count, step_name="place_order-btn")
             self.logging.info(f"Your order of {self.product['name']} was succesfully placed. MISSION COMPLETE!!!!")
         else:
             self.logging.info(f"This is the end of the line for the --test_mode. Wait 10 seconds and program will terminate.")
@@ -193,6 +213,14 @@ class StockBot():
         self.logging.info(f"Navigating to {url} ")
         self.driver.get(url)
         return
+
+    def beat_bandh_bot_challenge(self):
+        text = "Access to this page has been denied"
+        elements = self.query_selector_all({"name": "", "selector": "p", "selector_type": "css_selector"})
+        target = self.find_element_with_text(elements, text, "innerText")
+        self.action_chain = ActionChains(self.driver)
+        self.action_chain.move_to_element_with_offset(target, -1000, 20).click_and_hold().perform()
+        self.action_chain.reset_actions()
 
     def query_selector(self, selector_obj, timeout=1, poll_freq=0.0001):
         if selector_obj['selector_type'] == "css_selector":
@@ -217,13 +245,18 @@ class StockBot():
         return dom_objs
 
     def wait_click(self, selector_obj, btn=None, func=None, func_dict=None, max_count=None,
-                    notif_count=10, refresh=False, refresh_count=200, shot_count=200, step_name=""):
+                    notif_count=10, refresh=False, refresh_count=200, shot_count=200, human_mode=False, step_name=""):
         count = 0
         while True:
             try:
                 if btn is None:
                     btn = self.query_selector(selector_obj)
-                btn.click()
+                if human_mode:
+                    self.action_chain = ActionChains(self.driver)
+                    self.action_chain.move_to_element(btn).click().perform()
+                    self.action_chain.reset_actions()
+                else:
+                    btn.click()
                 break
             except:
                 if count <= notif_count:
@@ -235,13 +268,18 @@ class StockBot():
                     self.driver.refresh()
                     if func and func_dict:
                         func(func_dict)
+                    if max_count and count == max_count:
+                        return False
                     count = 0
                 if count % shot_count == 0 and count != 0 and not os.path.exists(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png"):
                     self.logging.info("Taking Screenshot")
                     self.driver.get_screenshot_as_file(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png")
+                    if max_count and count == max_count:
+                        return False
                     count = 0
             if max_count and count == max_count:
-                return False
+                    return False
+
             count +=1
         self.logging.info(f'Successfully Clicked {selector_obj["name"]}')
         return True
@@ -271,13 +309,17 @@ class StockBot():
                 if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
+                    if max_count and count == max_count:
+                        return False
                     count = 0
                 if count % shot_count == 0 and count != 0 and not os.path.exists(f"../screenshots/{self.site_name}_{step_name}_typeerror_{self.dt_str}.png"):
                     self.logging.info("Taking Screenshot")
                     self.driver.get_screenshot_as_file(f"../screenshots/{self.site_name}_{step_name}_typeerror_{self.dt_str}.png")
+                    if max_count and count == max_count:
+                        return False
                     count = 0
             if max_count and count == max_count:
-                return False
+                    return False
             count +=1
         self.logging.info(f'Successfully Filled in {selector_obj["name"]}')
         return True
