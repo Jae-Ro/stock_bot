@@ -18,7 +18,8 @@ def start_run(config, config_path, product_index, args):
                     website_dict=config['website'], product_dict=products[product_index], 
                     logger=logging, cvv_code=env_config("CVV"), dt_str=dt_string, max_price=args['max_price'], 
                     headless=args['headless'], test_mode=args['test_mode'])
-    bot.run()
+    ret = bot.run()
+    return ret
 
 def search_product_list(product_list, search_string):
     search_terms = search_string.lower().split(" ")
@@ -35,6 +36,7 @@ def search_product_list(product_list, search_string):
 
 def main(args):
     try:
+        finish = False
         if not args['all_products']:
             if args['bestbuy']:
                 config_file_path = "./configs/bestbuy_config.json"
@@ -50,12 +52,14 @@ def main(args):
             with open(config_file_path) as file:
                 config = json.load(file)
             product_index = search_product_list(config['products'], args['product'])
-            start_run(config, config_file_path, product_index, args)
+            finish = start_run(config, config_file_path, product_index, args)        
         else:
             pass
+    
     except Exception as e:
         print(e)
 
+    return finish
 
 if __name__== "__main__":
     parser = argparse.ArgumentParser()

@@ -71,6 +71,7 @@ class StockBot():
         self.start = None
     
     def run(self):
+        finish = False
         try:
             self.start = time.time()
             # Logging and Storing Cookies so we don't have to login again
@@ -91,9 +92,12 @@ class StockBot():
             self.navigate(self.website['cart_url'])
             self.checkout(self.website['checkout_btn_obj'], self.website['cvv_security_field_obj'], self.cvv_code, self.website['place_order_btn_obj'])
             self.finish()
+            finish = True
         except Exception as e:
             self.logging.debug(f"{traceback.print_exc()}")
             self.finish()
+        
+        return finish
 
     def login(self, username_obj, password_obj, submit_obj):
         self.logging.info(f'Starting to Login to {self.site_name} Account')
