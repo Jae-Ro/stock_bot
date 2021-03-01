@@ -11,6 +11,7 @@ import sys, traceback
 import random
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.select import Select
+import locale
 
 
 class StockBot():
@@ -25,6 +26,8 @@ class StockBot():
         self.cvv_code = str(cvv_code)
         self.max_price = float(max_price)
         self.dt_str = dt_str
+        self.locale = locale
+        self.locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
         options = webdriver.FirefoxOptions()
         if headless:
             options.add_argument("--headless")
@@ -124,12 +127,12 @@ class StockBot():
         try:
             price_selector_obj, max_price = kwarg_dict['price_selector_obj'], kwarg_dict['max_price']
             self.logging.info(f"Checking Price of {self.product['name']}")
-            price = self.query_selector(price_selector_obj).get_attribute(price_selector_obj["attribute"])
+            price = self.query_selector(price_selector_obj, timeout=5).get_attribute(price_selector_obj["attribute"])
             if self.site_name == "walmart":
                 price = price.split("\n")[0].split("$")[-1]
             else:
                 price = price.split("$")[-1]
-            price = float(price)
+            price = self.locale.atof(price)
             self.logging.info(f"Price of {self.product['name']}: ${price}")
             if price > max_price:
                 self.logging.info(f" Current Product Price: ${price} > Max Price Limit: ${max_price}. Exiting Program.")
@@ -146,11 +149,11 @@ class StockBot():
         price_dict = {"price_selector_obj": price_selector_obj, "max_price": max_price}
         self.price_check(price_dict)
         if self.site_name == "bandh":
-            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=300,
-                        shot_count=300, human_mode=True, step_name="addtocart-btn")
+            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=50,
+                        shot_count=50, human_mode=True, step_name="addtocart-btn")
         else:
-            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=300,
-                        shot_count=300, step_name="addtocart-btn")
+            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=50,
+                        shot_count=50, step_name="addtocart-btn")
         return
 
     def find_element_with_text(self, elements, text, attribute):
@@ -267,10 +270,17 @@ class StockBot():
                     btn.click()
                 break
             except:
+                shot_condition, refresh_condition = False, False
                 if count <= notif_count:
                     self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
                     if count == notif_count:
                         self.logging.info("...")
+                if count % shot_count == 0 and count != 0 and not os.path.exists(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png"):
+                    self.logging.info("Taking Screenshot")
+                    self.driver.get_screenshot_as_file(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png")
+                    if max_count and count == max_count:
+                        return False
+                    shot_condition = True
                 if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
@@ -278,12 +288,8 @@ class StockBot():
                         func(func_dict)
                     if max_count and count == max_count:
                         return False
-                    count = 0
-                if count % shot_count == 0 and count != 0 and not os.path.exists(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png"):
-                    self.logging.info("Taking Screenshot")
-                    self.driver.get_screenshot_as_file(f"../screenshots/{self.site_name}_{step_name}_clickerror_{self.dt_str}.png")
-                    if max_count and count == max_count:
-                        return False
+                    refresh_condition = True
+                if shot_condition or refresh_condition:
                     count = 0
             if max_count and count == max_count:
                     return False
@@ -310,22 +316,26 @@ class StockBot():
                     field.send_keys(text)
                 break
             except:
+                shot_condition, refresh_condition = False, False
                 if count <= notif_count:
                     self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
                     if count == notif_count:
                         self.logging.info("...")
-                if count % refresh_count == 0 and count != 0 and refresh:
-                    self.logging.info("Refreshing Page")
-                    self.driver.refresh()
-                    if max_count and count == max_count:
-                        return False
-                    count = 0
                 if count % shot_count == 0 and count != 0 and not os.path.exists(f"../screenshots/{self.site_name}_{step_name}_typeerror_{self.dt_str}.png"):
                     self.logging.info("Taking Screenshot")
                     self.driver.get_screenshot_as_file(f"../screenshots/{self.site_name}_{step_name}_typeerror_{self.dt_str}.png")
                     if max_count and count == max_count:
                         return False
+                    shot_condition = True
+                if count % refresh_count == 0 and count != 0 and refresh:
+                    self.logging.info("Refreshing Page")
+                    self.driver.refresh()
+                    if max_count and count == max_count:
+                        return False
+                    refresh_condition = True
+                if shot_condition or refresh_condition:
                     count = 0
+            
             if max_count and count == max_count:
                     return False
             count +=1

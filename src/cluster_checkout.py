@@ -11,12 +11,13 @@ async def show_output(process):
         if process.poll() is not None: # returns None if the process is still running.
             break
         if output:
-            print(output.strip())
+            out = output.strip()
+            print(out)
     rc = process.poll()
     return 
 
 async def main(args):
-    product= f"--product='{args['product']}'"
+    product= f"--product={args['product']}"
     try:
         if args['test_mode'] and not args['headless']:
             newegg = subprocess.Popen(["python", "checkout.py", "--test_mode", "--newegg",  product], shell=False, stdout=subprocess.PIPE)
@@ -32,8 +33,8 @@ async def main(args):
         
         elif not args['test_mode'] and not args['headless']:
             newegg = subprocess.Popen(["python", "checkout.py", "--newegg",  product], shell=False, stdout=subprocess.PIPE)
-            bestbuy = subprocess.Popen(["python", "checkout.py", "--bestbuy",  product], shell=False, stdout=subprocess.PIPE)
-            walmart = subprocess.Popen(["python", "checkout.py", "--walmart",  product], shell=False, stdout=subprocess.PIPE)
+            # bestbuy = subprocess.Popen(["python", "checkout.py", "--bestbuy",  product], shell=False, stdout=subprocess.PIPE)
+            # walmart = subprocess.Popen(["python", "checkout.py", "--walmart",  product], shell=False, stdout=subprocess.PIPE)
             bandh = subprocess.Popen(["python", "checkout.py", "--bandh",  product], shell=False, stdout=subprocess.PIPE)
         
         elif args['test_mode'] and args['headless']:
@@ -43,11 +44,11 @@ async def main(args):
             bandh = subprocess.Popen(["python", "checkout.py", "--test_mode", "--bandh",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
         
         newegg_coro = show_output(newegg)
-        bestbuy_coro = show_output(bestbuy)
-        walmart_coro = show_output(walmart)
+        # bestbuy_coro = show_output(bestbuy)
+        # walmart_coro = show_output(walmart)
         bandh_coro = show_output(bandh)
 
-        await asyncio.gather(newegg_coro, bandh_coro, bestbuy_coro, walmart_coro)
+        await asyncio.gather(newegg_coro, bandh_coro)
     except:
         pass
 

@@ -6,6 +6,7 @@ from Bot import StockBot
 import os
 from decouple import config as env_config
 from datetime import datetime
+import asyncio
 
 def start_run(config, config_path, product_index, args):
     products = config['products']
@@ -22,19 +23,21 @@ def start_run(config, config_path, product_index, args):
     return ret
 
 def search_product_list(product_list, search_string):
+    # print(str(search_string))
     search_terms = search_string.lower().split(" ")
-    max_match = 0
+    # print("original search terms: ", search_terms)
+    max_match = []
     max_index = 0
     for i, p in enumerate(product_list):
         keywords = set(p['keywords'])
         matches = [s for s in search_terms if s.strip() in keywords]
-        if len(matches) > max_match:
-            max_match = len(matches)
+        if len(matches) > len(max_match):
+            max_match = matches
             max_index = i
-    
+    # print("Final Match: ", max_match)
     return max_index
 
-def main(args):
+async def main(args):
     try:
         finish = False
         if not args['all_products']:
@@ -73,4 +76,4 @@ if __name__== "__main__":
     parser.add_argument("--product", help="type in what product you're looking for", default="ps5 disk")
     parser.add_argument("--all_products", help="use this flag to turn on searching for all products you have listed in the config for the stores you are searching", action="store_true")
     args = vars(parser.parse_args())
-    main(args)
+    asyncio.run(main(args))
