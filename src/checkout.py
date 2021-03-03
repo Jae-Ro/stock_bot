@@ -50,7 +50,7 @@ async def main(args):
             elif args['newegg']:
                 config_file_path="./configs/newegg_config.json"
             else:
-                logging.info("No website was selected. Terminating Program.")
+                print("No website was selected. Terminating Program.")
                 return
             with open(config_file_path) as file:
                 config = json.load(file)

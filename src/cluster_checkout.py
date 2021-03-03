@@ -26,16 +26,16 @@ async def main(args):
             bandh = subprocess.Popen(["python", "checkout.py", "--test_mode", "--bandh",  product], shell=False, stdout=subprocess.PIPE)
         
         elif args['headless'] and not args['test_mode']:
-            newegg = subprocess.Popen(["python", "checkout.py", "--newegg",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
+            # newegg = subprocess.Popen(["python", "checkout.py", "--newegg",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
             bestbuy = subprocess.Popen(["python", "checkout.py", "--bestbuy",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
             walmart = subprocess.Popen(["python", "checkout.py", "--walmart",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
-            bandh = subprocess.Popen(["python", "checkout.py", "--bandh",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
+            # bandh = subprocess.Popen(["python", "checkout.py", "--bandh",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
         
         elif not args['test_mode'] and not args['headless']:
-            newegg = subprocess.Popen(["python", "checkout.py", "--newegg",  product], shell=False, stdout=subprocess.PIPE)
-            # bestbuy = subprocess.Popen(["python", "checkout.py", "--bestbuy",  product], shell=False, stdout=subprocess.PIPE)
-            # walmart = subprocess.Popen(["python", "checkout.py", "--walmart",  product], shell=False, stdout=subprocess.PIPE)
-            bandh = subprocess.Popen(["python", "checkout.py", "--bandh",  product], shell=False, stdout=subprocess.PIPE)
+            # newegg = subprocess.Popen(["python", "checkout.py", "--newegg",  product], shell=False, stdout=subprocess.PIPE)
+            bestbuy = subprocess.Popen(["python", "checkout.py", "--bestbuy",  product], shell=False, stdout=subprocess.PIPE)
+            walmart = subprocess.Popen(["python", "checkout.py", "--walmart",  product], shell=False, stdout=subprocess.PIPE)
+            # bandh = subprocess.Popen(["python", "checkout.py", "--bandh",  product], shell=False, stdout=subprocess.PIPE)
         
         elif args['test_mode'] and args['headless']:
             newegg = subprocess.Popen(["python", "checkout.py", "--test_mode", "--newegg",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
@@ -43,12 +43,12 @@ async def main(args):
             walmart = subprocess.Popen(["python", "checkout.py", "--test_mode", "--walmart",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
             bandh = subprocess.Popen(["python", "checkout.py", "--test_mode", "--bandh",  product, "--headless"], shell=False, stdout=subprocess.PIPE)
         
-        newegg_coro = show_output(newegg)
-        # bestbuy_coro = show_output(bestbuy)
-        # walmart_coro = show_output(walmart)
-        bandh_coro = show_output(bandh)
+        # newegg_coro = show_output(newegg)
+        bestbuy_coro = show_output(bestbuy)
+        walmart_coro = show_output(walmart)
+        # bandh_coro = show_output(bandh)
 
-        await asyncio.gather(newegg_coro, bandh_coro)
+        await asyncio.gather(bestbuy_coro, walmart_coro)
     except:
         pass
 

@@ -270,6 +270,7 @@ class StockBot():
                     btn.click()
                 break
             except:
+                time.sleep(random.uniform(0, 0.5))
                 shot_condition, refresh_condition = False, False
                 if count <= notif_count:
                     self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
@@ -283,6 +284,7 @@ class StockBot():
                     shot_condition = True
                 if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
+                    time.sleep(random.uniform(0, 3))
                     self.driver.refresh()
                     if func and func_dict:
                         func(func_dict)
@@ -316,6 +318,7 @@ class StockBot():
                     field.send_keys(text)
                 break
             except:
+                time.sleep(random.uniform(0, 0.5))
                 shot_condition, refresh_condition = False, False
                 if count <= notif_count:
                     self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Fill In")
@@ -330,6 +333,7 @@ class StockBot():
                 if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
+                    time.sleep(random.uniform(0, 3))
                     if max_count and count == max_count:
                         return False
                     refresh_condition = True
