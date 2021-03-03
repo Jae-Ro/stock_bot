@@ -49,6 +49,7 @@ Author: Jae Ro
 
 #### Basic Run Command:
 - note: make sure to look at table of command line arguments before running
+- note: make sure when you run it for the first time to not run it in headless mode. The first run is to log you in to the selected store and then save your credentials as cookies (for newegg you will need to check your email and enter the security code for 2fa)
 ```
 $ python checkout.py --{argument1} --{argument2} --{etc}
 ```
