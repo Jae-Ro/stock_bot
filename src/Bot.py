@@ -233,7 +233,7 @@ class StockBot():
         self.action_chain.move_to_element_with_offset(target, -1000, 20).click_and_hold().perform()
         self.action_chain.reset_actions()
 
-    def query_selector(self, selector_obj, timeout=0.00005, poll_freq=0.000001):
+    def query_selector(self, selector_obj, timeout=0.00000001, poll_freq=0.00000001):
         if selector_obj['selector_type'] == "css_selector":
             dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "id":
@@ -244,7 +244,7 @@ class StockBot():
             dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.XPATH, selector_obj['selector'])))
         return dom_obj
     
-    def query_selector_all(self, selector_obj, timeout=1, poll_freq=0.000001):
+    def query_selector_all(self, selector_obj, timeout=0.005, poll_freq=0.000001):
         if selector_obj['selector_type'] == "css_selector":
             dom_objs = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "id":
@@ -270,7 +270,7 @@ class StockBot():
                     btn.click()
                 break
             except:
-                time.sleep(random.uniform(0, 0.5))
+                # time.sleep(random.uniform(0, 0.000005))
                 shot_condition, refresh_condition = False, False
                 if count <= notif_count:
                     self.logging.info(f"Didnt Find Selector {selector_obj['name']} to Click")
@@ -284,7 +284,7 @@ class StockBot():
                     shot_condition = True
                 if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
-                    time.sleep(random.uniform(0, 0.05))
+                    # time.sleep(random.uniform(0, 0.00005))
                     self.driver.refresh()
                     if func and func_dict:
                         func(func_dict)
