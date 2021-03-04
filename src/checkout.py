@@ -11,7 +11,7 @@ import asyncio
 def start_run(config, config_path, product_index, args):
     products = config['products']
     now = datetime.now()
-    dt_string = now.strftime("%m%d%Y-%H:%M:%S")
+    dt_string = now.strftime("%m%d%Y-%H_%M_%S")
     site_name = config_path.split("/")[-1].split("_config.json")[0]
     logging_name = f"{products[product_index]['name']} - {site_name.upper()}"
     logging = logger.create_logger(dt_string, logging_name, site_name)
