@@ -152,8 +152,8 @@ class StockBot():
             self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=50,
                         shot_count=50, human_mode=True, step_name="addtocart-btn")
         else:
-            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=50,
-                        shot_count=50, step_name="addtocart-btn")
+            self.wait_click(selector_obj, func=self.price_check, func_dict=price_dict, refresh=True, refresh_count=1,
+                        shot_count=1000, step_name="addtocart-btn")
         return
 
     def find_element_with_text(self, elements, text, attribute):
@@ -168,7 +168,7 @@ class StockBot():
         shot_count, max_count = 30, 30
         # Website-sepcific Checkout Procedure
         if self.site_name =="walmart":
-            self.wait_click(checkout_btn, refresh_count=100, refresh=True, shot_count=100, step_name="checkout-btn")
+            self.wait_click(checkout_btn, refresh_count=1, refresh=True, shot_count=1, step_name="checkout-btn")
             self.wait_click(self.website['delivery_date_continue_btn_obj'], step_name="fulfillment-btn")
             self.wait_click(self.website['confirm_delivery_address_continue_btn_obj'], step_name="confirm-address-btn")
             self.wait_type(security_code_field, security_code, step_name="cvv-security-code-field")
@@ -233,7 +233,7 @@ class StockBot():
         self.action_chain.move_to_element_with_offset(target, -1000, 20).click_and_hold().perform()
         self.action_chain.reset_actions()
 
-    def query_selector(self, selector_obj, timeout=1, poll_freq=0.0001):
+    def query_selector(self, selector_obj, timeout=0.00005, poll_freq=0.000001):
         if selector_obj['selector_type'] == "css_selector":
             dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "id":
@@ -244,7 +244,7 @@ class StockBot():
             dom_obj = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_element_located((By.XPATH, selector_obj['selector'])))
         return dom_obj
     
-    def query_selector_all(self, selector_obj, timeout=1, poll_freq=0.0001):
+    def query_selector_all(self, selector_obj, timeout=1, poll_freq=0.000001):
         if selector_obj['selector_type'] == "css_selector":
             dom_objs = WebDriverWait(self.driver, timeout, poll_frequency=poll_freq).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_obj['selector'])))
         elif selector_obj['selector_type'] == "id":
@@ -257,7 +257,7 @@ class StockBot():
 
     def wait_click(self, selector_obj, btn=None, func=None, func_dict=None, max_count=None,
                     notif_count=10, refresh=False, refresh_count=200, shot_count=200, human_mode=False, step_name=""):
-        count = 0
+        count = 1
         while True:
             try:
                 if btn is None:
