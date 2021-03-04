@@ -284,7 +284,7 @@ class StockBot():
                     shot_condition = True
                 if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
-                    time.sleep(random.uniform(0, 3))
+                    time.sleep(random.uniform(0, 0.05))
                     self.driver.refresh()
                     if func and func_dict:
                         func(func_dict)
@@ -333,7 +333,7 @@ class StockBot():
                 if count % refresh_count == 0 and count != 0 and refresh:
                     self.logging.info("Refreshing Page")
                     self.driver.refresh()
-                    time.sleep(random.uniform(0, 3))
+                    time.sleep(random.uniform(0, 0.05))
                     if max_count and count == max_count:
                         return False
                     refresh_condition = True
