@@ -6,7 +6,16 @@ Author: Jae Ro
 - Newegg
 - BandH
 
-#### Before Running
+#### Prerequisites
+1. Make sure to download and install the geckodriver (webdriver for Firefox). If you're on mac and have homebrew installed you can run ```brew install geckodriver```
+2. Install the following python packages (note: this project uses python 3.7.6)
+   - selenium
+   - requests
+   - python-decouple
+   - asyncio
+   - locale
+
+#### Setup & Configuration
 1. You will need to add a ```.env``` file to the root directory of the project
    -  inside the .env file you will need the following variables filled out
       -  WALMART_USERNAME= 
@@ -39,13 +48,6 @@ Author: Jae Ro
 
 ```
 4. Make sure you add the ```--test_mode``` flag to the run argument if you're not trying to actually buy the product
-5. Make sure to download and install the geckodriver (webdriver for Firefox). If you're on mac and have homebrew installed you can run ```brew install geckodriver```
-6. Install the following python packages (note: this project uses python 3.7.6)
-   - selenium
-   - requests
-   - python-decouple
-   - asyncio
-   - locale
 
 #### Basic Run Command:
 - note: make sure to look at table of command line arguments before running
